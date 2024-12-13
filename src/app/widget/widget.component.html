@@ -1,0 +1,25 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>{{ getTitle() }}</mat-card-title>
+    <button mat-button color="warn" (click)="remove.emit()">Удалить</button>
+  </mat-card-header>
+  <mat-card-content>
+
+    <div *ngIf="type === 'progress'" #chart>
+      <apx-chart
+        [series]="chartOptions.series"
+        [chart]="chartOptions.chart"
+        [xaxis]="chartOptions.xaxis"
+        [title]="chartOptions.title"
+      ></apx-chart>
+    </div>
+
+    <div *ngIf="type === 'tasks'">
+      Задачи: {{ project.tasksCompleted }} / {{ project.tasksTotal }}
+    </div>
+    <div *ngIf="type === 'dates'">
+      Сроки: {{ project.startDate }} / {{ project.endDate }}
+    </div>
+    <span>{{ project.name }}</span>
+  </mat-card-content>
+</mat-card>

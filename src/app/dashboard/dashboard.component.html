@@ -1,0 +1,12 @@
+<div *ngFor="let project of projects; let i = index" class="projects__dashboard">
+    <div cdkDropList (cdkDropListDropped)="drop($event)" class="dashboard">
+      <div *ngFor="let widget of widgets; let i = index;" cdkDrag>
+        <app-widget [type]="widget.type" [project]="project" (remove)="removeWidget(i)"></app-widget>
+
+      </div>
+    </div>
+
+    <button mat-button (click)="addWidget('progress', project.id)">Добавить виджет прогресса</button>
+    <button mat-button (click)="addWidget('tasks', project.id)">Добавить виджет задач</button>
+    <button mat-button (click)="addWidget('dates', project.id)">Добавить виджет сроков</button>
+</div>
