@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { DragDropModule, CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
 import { WidgetComponent } from '../widget/widget.component';
-import { DragDropModule } from '@angular/cdk/drag-drop';
 import { ProjectService, Project } from '../project.service';
 
 @Component({
@@ -13,11 +12,7 @@ import { ProjectService, Project } from '../project.service';
 })
 export class DashboardComponent implements OnInit {
   projects: Project[] = [];
-  widgets = [
-    { type: 'progress', projectId: 1 },
-    { type: 'tasks',  projectId: 2 },
-    { type: 'dates',  projectId: 3 }
-  ];
+  widgetsByProject: { [projectId: number]: { type: string }[] } = {};
 
   constructor(
     private projectService: ProjectService
@@ -26,40 +21,48 @@ export class DashboardComponent implements OnInit {
   ngOnInit(): void {
     this.projects = this.projectService.getProjects();
 
-    this.widgets = this.widgets.map(widget => ({
-      ...widget,
-      project: this.projectService.getProjectById(widget.projectId) // Получение данных проекта
-    }));
-
-    console.log('this.projects', this.projects);
-    console.log('this.widgets', this.widgets);
-
-    this.loadWidgets();
+    // Инициализируем виджеты для каждого проекта
+    this.projects.forEach(project => {
+      this.widgetsByProject[project.id] = this.loadWidgetsForProject(project.id);
+    });
   }
 
-  drop(event: CdkDragDrop<any[]>) {
-    moveItemInArray(this.widgets, event.previousIndex, event.currentIndex);
-    this.saveWidgets();
+  dragWidget(event: CdkDragDrop<any[]>, projectId: number) {
+    moveItemInArray(this.widgetsByProject[projectId], event.previousIndex, event.currentIndex);
+    this.saveWidgetsForProject(projectId);
   }
 
   addWidget(type: string, projectId: number) {
-    this.widgets.push({ type, projectId });
-    this.saveWidgets();
+    this.widgetsByProject[projectId].push({ type });
+    this.saveWidgetsForProject(projectId);
   }
 
-  removeWidget(index: number) {
-    this.widgets.splice(index, 1);
-    this.saveWidgets();
+  removeWidget(index: number, projectId: number) {
+    this.widgetsByProject[projectId].splice(index, 1);
+    this.saveWidgetsForProject(projectId);
   }
 
-  saveWidgets() {
-    localStorage.setItem('widgets', JSON.stringify(this.widgets));
+  saveWidgetsForProject(projectId: number, widgets?: { type: string }[]): void {
+    const widgetsToSave = widgets ?? this.widgetsByProject[projectId];
+    localStorage.setItem(`widgets_project_${projectId}`, JSON.stringify(widgetsToSave));
   }
 
-  loadWidgets() {
-    const savedWidgets = localStorage.getItem('widgets');
+  loadWidgetsForProject(projectId: number): { type: string }[] {
+    const savedWidgets = localStorage.getItem(`widgets_project_${projectId}`);
+    console.log(`Project ${projectId} widgets from localStorage:`, savedWidgets);
+
     if (savedWidgets) {
-      this.widgets = JSON.parse(savedWidgets);
+      return JSON.parse(savedWidgets);
     }
+
+    // Если данных нет, при инициализации возвращаем дефолтные виджеты
+    const defaultWidgets = [
+      { type: 'progress' },
+      { type: 'tasks' },
+      { type: 'dates' }
+    ];
+    this.saveWidgetsForProject(projectId, defaultWidgets); // Сохраняем дефолтные виджеты в localStorage
+
+    return defaultWidgets;
   }
 }

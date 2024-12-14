@@ -17,9 +17,13 @@
     <div *ngIf="type === 'tasks'">
       Задачи: {{ project.tasksCompleted }} / {{ project.tasksTotal }}
     </div>
+
     <div *ngIf="type === 'dates'">
       Сроки: {{ project.startDate }} / {{ project.endDate }}
     </div>
-    <span>{{ project.name }}</span>
+
+    <div class="project__title">
+      <span>{{ project.name }}</span>
+    </div>
   </mat-card-content>
 </mat-card>

@@ -1,6 +1,11 @@
-import {Component, Input, Output, EventEmitter, ViewChild, OnInit} from '@angular/core';
-import { MatCardModule } from '@angular/material/card';
-import { CommonModule } from '@angular/common';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  ViewChild,
+  OnInit
+} from '@angular/core';
 import {
   ChartComponent,
   ApexAxisChartSeries,
@@ -9,7 +14,8 @@ import {
   ApexTitleSubtitle,
   NgApexchartsModule
 } from "ng-apexcharts";
-import { ProjectService } from '../project.service';
+import { MatCardModule } from '@angular/material/card';
+import { CommonModule } from '@angular/common';
 
 export type ChartOptions = {
   series: ApexAxisChartSeries;
@@ -26,7 +32,6 @@ export type ChartOptions = {
 })
 export class WidgetComponent implements OnInit {
   @Input() type!: string;
-  // @Input() projectId!: number;
   @Input() project!: any;
   @Output() remove = new EventEmitter<void>();
 
@@ -36,13 +41,11 @@ export class WidgetComponent implements OnInit {
   tasksCompleted: number;
   tasksTotal: number;
 
-  constructor(
-    private projectService: ProjectService
-  ) {
+  constructor() {
     this.chartOptions = {
       series: [
         {
-          name: "Progress",
+          name: "Tasks progress",
           data: []
         }
       ],
@@ -50,7 +53,7 @@ export class WidgetComponent implements OnInit {
         type: "bar"
       },
       title: {
-        text: "Прогресс выполнения"
+        text: "Задачи"
       },
       xaxis: {
         categories: ["Выполнено", "Всего задач"]
@@ -71,9 +74,7 @@ export class WidgetComponent implements OnInit {
       case 'dates':
         return 'Срок выполнения';
       default:
-        return 'Виджет';
+        return '';
     }
   }
-
-
 }
