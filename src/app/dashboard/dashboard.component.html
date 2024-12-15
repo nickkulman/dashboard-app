@@ -1,8 +1,8 @@
 <div *ngFor="let project of projects; let i = index" class="projects__dashboard">
   <div class="project__buttons">
-    <button mat-button (click)="addWidget('progress', project.id)">Добавить прогресс</button>
-    <button mat-button (click)="addWidget('tasks', project.id)">Добавить задачи</button>
-    <button mat-button (click)="addWidget('dates', project.id)">Добавить сроки</button>
+    <button mat-button (click)="addWidget(WIDGET_TYPES.PROGRESS, project.id)">Добавить прогресс</button>
+    <button mat-button (click)="addWidget(WIDGET_TYPES.TASKS, project.id)">Добавить задачи</button>
+    <button mat-button (click)="addWidget(WIDGET_TYPES.DATES, project.id)">Добавить сроки</button>
   </div>
 
   <div cdkDropList (cdkDropListDropped)="dragWidget($event, project.id)" class="dashboard">

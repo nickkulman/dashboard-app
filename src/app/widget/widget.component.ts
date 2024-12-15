@@ -14,6 +14,7 @@ import { CommonModule } from '@angular/common';
 import { ProgressWidgetComponent } from '../progress-widget/progress-widget.component';
 import { TasksWidgetComponent } from '../tasks-widget/tasks-widget.component';
 import { DatesWidgetComponent } from '../dates-widget/dates-widget.component';
+import { WIDGET_TYPES } from '../project.service';
 
 @Component({
   selector: 'app-widget',
@@ -36,31 +37,18 @@ export class WidgetComponent implements AfterViewInit {
     this.loadWidget();
   }
 
-  getTitle(): string {
-    switch (this.type) {
-      case 'progress':
-        return 'Прогресс выполнения';
-      case 'tasks':
-        return 'Статистика по задачам';
-      case 'dates':
-        return 'Срок выполнения';
-      default:
-        return '';
-    }
-  }
-
   private loadWidget() {
     let component: Type<any>;
 
     // Определяем, какой компонент отобразить
     switch (this.type) {
-      case 'progress':
+      case WIDGET_TYPES.PROGRESS:
         component = ProgressWidgetComponent;
         break;
-      case 'tasks':
+      case WIDGET_TYPES.TASKS:
         component = TasksWidgetComponent;
         break;
-      case 'dates':
+      case WIDGET_TYPES.DATES:
         component = DatesWidgetComponent;
         break;
       default:
@@ -72,7 +60,7 @@ export class WidgetComponent implements AfterViewInit {
     const factory = this.resolver.resolveComponentFactory(component);
     const componentRef = this.container.createComponent(factory);
 
-    // Передаем входные данные
+    // Передаем в компонент входные данные
     componentRef.instance.project = this.project;
   }
 }

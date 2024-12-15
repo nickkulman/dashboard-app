@@ -17,6 +17,12 @@ export interface WidgetByProject {
   [projectId: number]: Widget[];
 }
 
+export enum WIDGET_TYPES {
+  PROGRESS = 'Прогресс выполнения',
+  TASKS = 'Статистика по задачам',
+  DATES = 'Срок выполнения'
+}
+
 @Injectable({ providedIn: 'root' })
 export class ProjectService {
   private projects = [

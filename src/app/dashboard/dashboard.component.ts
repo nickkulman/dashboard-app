@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { DragDropModule, CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
 import { WidgetComponent } from '../widget/widget.component';
-import { ProjectService, Project, Widget, WidgetByProject } from '../project.service';
+import { ProjectService, Project, Widget, WidgetByProject, WIDGET_TYPES } from '../project.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -13,6 +13,7 @@ import { ProjectService, Project, Widget, WidgetByProject } from '../project.ser
 export class DashboardComponent implements OnInit {
   projects: Project[] = [];
   widgetsByProject: WidgetByProject = {};
+  WIDGET_TYPES = WIDGET_TYPES;
 
   constructor(private projectService: ProjectService) {
   }
@@ -56,9 +57,9 @@ export class DashboardComponent implements OnInit {
 
     // Если данных нет, при инициализации возвращаем дефолтные виджеты
     const defaultWidgets = [
-      { type: 'progress' },
-      { type: 'tasks' },
-      { type: 'dates' }
+      { type: WIDGET_TYPES.PROGRESS },
+      { type: WIDGET_TYPES.TASKS },
+      { type: WIDGET_TYPES.DATES }
     ];
     this.saveWidgetsForProject(projectId, defaultWidgets); // Сохраняем дефолтные виджеты в localStorage
 
