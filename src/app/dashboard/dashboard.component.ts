@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { DragDropModule, CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
 import { WidgetComponent } from '../widget/widget.component';
-import { ProjectService, Project } from '../project.service';
+import { ProjectService, Project, Widget, WidgetByProject } from '../project.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -12,11 +12,10 @@ import { ProjectService, Project } from '../project.service';
 })
 export class DashboardComponent implements OnInit {
   projects: Project[] = [];
-  widgetsByProject: { [projectId: number]: { type: string }[] } = {};
+  widgetsByProject: WidgetByProject = {};
 
-  constructor(
-    private projectService: ProjectService
-  ) { }
+  constructor(private projectService: ProjectService) {
+  }
 
   ngOnInit(): void {
     this.projects = this.projectService.getProjects();
@@ -42,12 +41,12 @@ export class DashboardComponent implements OnInit {
     this.saveWidgetsForProject(projectId);
   }
 
-  saveWidgetsForProject(projectId: number, widgets?: { type: string }[]): void {
+  saveWidgetsForProject(projectId: number, widgets?: Widget[]): void {
     const widgetsToSave = widgets ?? this.widgetsByProject[projectId];
     localStorage.setItem(`widgets_project_${projectId}`, JSON.stringify(widgetsToSave));
   }
 
-  loadWidgetsForProject(projectId: number): { type: string }[] {
+  loadWidgetsForProject(projectId: number): Widget[] {
     const savedWidgets = localStorage.getItem(`widgets_project_${projectId}`);
     console.log(`Project ${projectId} widgets from localStorage:`, savedWidgets);
 

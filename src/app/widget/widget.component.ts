@@ -2,67 +2,38 @@ import {
   Component,
   Input,
   Output,
+  Type,
   EventEmitter,
+  AfterViewInit,
   ViewChild,
-  OnInit
+  ViewContainerRef,
+  ComponentFactoryResolver
 } from '@angular/core';
-import {
-  ChartComponent,
-  ApexAxisChartSeries,
-  ApexChart,
-  ApexXAxis,
-  ApexTitleSubtitle,
-  NgApexchartsModule
-} from "ng-apexcharts";
 import { MatCardModule } from '@angular/material/card';
 import { CommonModule } from '@angular/common';
-
-export type ChartOptions = {
-  series: ApexAxisChartSeries;
-  chart: ApexChart;
-  xaxis: ApexXAxis;
-  title: ApexTitleSubtitle;
-};
+import { ProgressWidgetComponent } from '../progress-widget/progress-widget.component';
+import { TasksWidgetComponent } from '../tasks-widget/tasks-widget.component';
+import { DatesWidgetComponent } from '../dates-widget/dates-widget.component';
 
 @Component({
   selector: 'app-widget',
   templateUrl: './widget.component.html',
   styleUrls: ['./widget.component.css'],
-  imports: [CommonModule, MatCardModule, NgApexchartsModule]
+  imports: [ CommonModule, MatCardModule ]
 })
-export class WidgetComponent implements OnInit {
-  @Input() type!: string;
-  @Input() project!: any;
+export class WidgetComponent implements AfterViewInit {
+  @Input() type: string;
+  @Input() project: any;
   @Output() remove = new EventEmitter<void>();
 
-  @ViewChild('chart') chart: ChartComponent;
-  public chartOptions: ChartOptions;
+  @ViewChild('id', { read: ViewContainerRef }) container!: ViewContainerRef;
 
-  tasksCompleted: number;
-  tasksTotal: number;
-
-  constructor() {
-    this.chartOptions = {
-      series: [
-        {
-          name: "Tasks progress",
-          data: []
-        }
-      ],
-      chart: {
-        type: "bar"
-      },
-      title: {
-        text: "Задачи"
-      },
-      xaxis: {
-        categories: ["Выполнено", "Всего задач"]
-      }
-    };
+  constructor(private resolver: ComponentFactoryResolver) {
   }
 
-  ngOnInit(): void {
-    this.chartOptions.series[0].data = [this.project.tasksCompleted, this.project.tasksTotal];
+  ngAfterViewInit(): void {
+    console.log(this.container);
+    this.loadWidget();
   }
 
   getTitle(): string {
@@ -76,5 +47,32 @@ export class WidgetComponent implements OnInit {
       default:
         return '';
     }
+  }
+
+  private loadWidget() {
+    let component: Type<any>;
+
+    // Определяем, какой компонент отобразить
+    switch (this.type) {
+      case 'progress':
+        component = ProgressWidgetComponent;
+        break;
+      case 'tasks':
+        component = TasksWidgetComponent;
+        break;
+      case 'dates':
+        component = DatesWidgetComponent;
+        break;
+      default:
+        console.error(`Неизвестный тип виджета: ${this.type}`);
+        return;
+    }
+
+    // Динамически создаем компонент
+    const factory = this.resolver.resolveComponentFactory(component);
+    const componentRef = this.container.createComponent(factory);
+
+    // Передаем входные данные
+    componentRef.instance.project = this.project;
   }
 }

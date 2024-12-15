@@ -9,6 +9,14 @@ export interface Project {
   endDate: string;
 }
 
+export interface Widget {
+  type: string;
+}
+
+export interface WidgetByProject {
+  [projectId: number]: Widget[];
+}
+
 @Injectable({ providedIn: 'root' })
 export class ProjectService {
   private projects = [
